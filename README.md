@@ -17,3 +17,7 @@ S2E16:
 - Created handleLogin function to make login API call
 - CORS - Installed cors in backedn => add middleware to app with configurations: origin : "http://localhost:5173" & credentials : true
 - Wheneever you're making a login API call so pass axios => { withCredentials : true }
+- Installed @reduxjs/toolkit and react-redux for state management
+- Created a store (configureStore) => add Provider to app
+- Created a userSlice and export actions(addUser, removeUser) and reducer
+- imported userReducer to store(appStore.js)
