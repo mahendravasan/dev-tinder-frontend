@@ -10,3 +10,10 @@ S2E15:
 - Created BrowserRouter > Routes > Route=/ Body > RouteChildren
 - Created an Outlet in your Body.jsx to render the RouteChildren like login and profile
 - Created separate Footer component and imported to Body.jsx
+
+S2E16:
+- Login page UI integration with daisyUI components
+- Installed axios for API integration
+- Created handleLogin function to make login API call
+- CORS - Installed cors in backedn => add middleware to app with configurations: origin : "http://localhost:5173" & credentials : true
+- Wheneever you're making a login API call so pass axios => { withCredentials : true }
