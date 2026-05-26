@@ -21,3 +21,7 @@ S2E16:
 - Created a store (configureStore) => add Provider to app
 - Created a userSlice and export actions(addUser, removeUser) and reducer
 - imported userReducer to store(appStore.js)
+- Created Feed component
+- Redirect to feed component after login
+- Updated the user name and profile pic in NavBar component after login
+- Refactor the code with constant file (BASE_URL) instead of using hard code API URL in components
