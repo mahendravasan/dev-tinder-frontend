@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { removeUser } from "../utils/userSlice";
+import { removeFeed } from "../utils/feedSlic";
 
 const NavBar = () => {
   const user = useSelector((store) => store.user);
@@ -14,6 +15,7 @@ const NavBar = () => {
     try {
       await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
       dispatch(removeUser());
+      dispatch(removeFeed());
       navigate("/login");
     } catch (error) {
       console.log(error);
@@ -42,19 +44,18 @@ const NavBar = () => {
             </div>
             <ul
               tabIndex="-1"
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+              className="menu menu-sm dropdown-content bg-gray-800 rounded-box z-1 mt-3 w-40 p-2 shadow"
             >
               <li>
-                <Link to="/profile">
+                <Link to="/profile" className="py-1.5">
                   Profile
-                  <span className="badge">New</span>
                 </Link>
               </li>
               <li>
-                <a>Settings</a>
+                <a className="py-1.5">Settings</a>
               </li>
               <li onClick={() => handleLogout()}>
-                <a>Logout</a>
+                <a className="py-1.5 text-red-500 font-bold">Logout</a>
               </li>
             </ul>
           </div>
