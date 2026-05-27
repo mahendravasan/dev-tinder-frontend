@@ -1,17 +1,19 @@
 # DevTinder
 
 S2E15:
+
 - Create a Vite + React application project setup
 - Remove unneccessary files
 - Installed tailwind css
 - Installed daisyUI Tailwind css component library
 - Created separate NavBar component and imported to Body.jsx
-- Installed react-router-dom for routing 
+- Installed react-router-dom for routing
 - Created BrowserRouter > Routes > Route=/ Body > RouteChildren
 - Created an Outlet in your Body.jsx to render the RouteChildren like login and profile
 - Created separate Footer component and imported to Body.jsx
 
 S2E16:
+
 - Login page UI integration with daisyUI components
 - Installed axios for API integration
 - Created handleLogin function to make login API call
@@ -25,3 +27,8 @@ S2E16:
 - Dispatch addUser action and add user data to use slice and Redirect to feed component after login
 - Updated the user name and profile pic in NavBar component using useSelector(user data from userSlice) after login
 - Refactor the code with constant file (BASE_URL) instead of using hard code API URL in components
+
+S2E17:
+
+- You should not be access other routes without login
+- If token is not present, redirect user to login page
