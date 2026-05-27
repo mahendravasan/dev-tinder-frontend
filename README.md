@@ -36,3 +36,4 @@ S2E17:
 - Added login form validations and show error message to user if any validation fails
 - Feed => add API call => Whenever the user on feed page, make an API call to backend and show the feed & store feed in feedSlice
 - Build the user card component and render on feed page
+- Implement EditProfile component with real-time preview and form validation in profile page
