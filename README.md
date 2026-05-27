@@ -32,3 +32,5 @@ S2E17:
 
 - You should not be access other routes without login
 - If token is not present, redirect user to login page
+- Logout API call => Whenever the user click on logout, make an API call to backend, clear token from backend cookies and remove user from userSlice using dispatch(removeUser()) and redirect user to login page
+-
