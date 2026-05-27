@@ -15,13 +15,13 @@ S2E16:
 - Login page UI integration with daisyUI components
 - Installed axios for API integration
 - Created handleLogin function to make login API call
-- CORS - Installed cors in backedn => add middleware to app with configurations: origin : "http://localhost:5173" & credentials : true
+- CORS - Installed cors in backend => add middleware to app with configurations: origin : "http://localhost:5173" & credentials : true
 - Wheneever you're making a login API call so pass axios => { withCredentials : true }
 - Installed @reduxjs/toolkit and react-redux for state management
 - Created a store (configureStore) => add Provider to app
 - Created a userSlice and export actions(addUser, removeUser) and reducer
 - imported userReducer to store(appStore.js)
 - Created Feed component
-- Redirect to feed component after login
-- Updated the user name and profile pic in NavBar component after login
+- Dispatch addUser action and add user data to use slice and Redirect to feed component after login
+- Updated the user name and profile pic in NavBar component using useSelector(user data from userSlice) after login
 - Refactor the code with constant file (BASE_URL) instead of using hard code API URL in components
