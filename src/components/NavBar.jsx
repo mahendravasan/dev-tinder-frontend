@@ -52,7 +52,14 @@ const NavBar = () => {
                 </Link>
               </li>
               <li>
-                <a className="py-1.5">Settings</a>
+                <Link to="/connections" className="py-1.5">
+                  Connections
+                </Link>
+              </li>
+              <li>
+                <Link to="/requests" className="py-1.5">
+                  Requests
+                </Link>
               </li>
               <li onClick={() => handleLogout()}>
                 <a className="py-1.5 text-red-500 font-bold">Logout</a>
