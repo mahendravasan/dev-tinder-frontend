@@ -312,7 +312,7 @@ const EditProfile = ({ user, setPreviewUser }) => {
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-                <option value="other">Other / Non-Binary</option>
+                <option value="other">Other</option>
               </select>
             </div>
           </div>
