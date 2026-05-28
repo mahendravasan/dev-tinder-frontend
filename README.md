@@ -40,4 +40,5 @@ S2E17:
 
 S2E18:
 
-- Implement connections API to see all my connections with redux state management
+- Connection page - Implement connections API to show all my connections with redux state management
+- Request page - Implement requests API to show all my received requests with redux state management
