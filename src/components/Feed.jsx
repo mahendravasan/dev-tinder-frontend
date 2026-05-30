@@ -24,12 +24,16 @@ const Feed = () => {
     getFeeds();
   }, []);
 
-  return (
-    feed && (
-      <div className="feeds-main flex justify-center items-center grow">
-        <UserCard user={feed[0]} />
-      </div>
-    )
+  return feed ? (
+    <div className="feeds-main flex justify-center items-center grow">
+      <UserCard user={feed[0]} />
+    </div>
+  ) : (
+    <div className="flex justify-center items-center grow">
+      <h1 className="text-2xl font-bold text-base-content">
+        No more profiles to show
+      </h1>
+    </div>
   );
 };
 

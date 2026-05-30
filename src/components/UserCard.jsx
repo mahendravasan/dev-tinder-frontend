@@ -1,7 +1,14 @@
 import React from "react";
+import { BASE_URL } from "../utils/constants";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { removeUserFromFeed } from "../utils/feedSlic";
 
-const UserCard = ({ user }) => {
-  const { firstName, lastName, gender, age, photoUrl, about, skills } = user;
+const UserCard = ({ user, showButtons = true }) => {
+  const { _id, firstName, lastName, gender, age, photoUrl, about, skills } =
+    user;
+
+  const dispatch = useDispatch();
 
   // Modern Tailwind-v4 mapping for gender badges
   const genderTheme = {
@@ -26,6 +33,21 @@ const UserCard = ({ user }) => {
   };
 
   const currentGender = genderTheme[gender?.toLowerCase()] || genderTheme.other;
+
+  const handleSendRequest = async (status, userId) => {
+    try {
+      const res = await axios.post(
+        BASE_URL + "/request/send/" + status + "/" + userId,
+        {},
+        {
+          withCredentials: true,
+        },
+      );
+      dispatch(removeUserFromFeed(userId));
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
 
   return (
     <div className="card w-full bg-base-100 shadow-2xl border border-base-200/50 rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-3xl hover:scale-[1.01] flex flex-col max-w-sm sm:max-w-md mx-auto">
@@ -89,7 +111,7 @@ const UserCard = ({ user }) => {
             Skills
           </h3>
           <div className="flex flex-wrap gap-1.5">
-            {skills.map((skill, index) => (
+            {skills?.map((skill, index) => (
               <span
                 key={index}
                 className="badge badge-outline border-base-content/25 text-base-content/85 hover:border-primary hover:text-primary transition-colors duration-200 font-semibold text-xs py-2.5 px-3 select-none"
@@ -101,30 +123,32 @@ const UserCard = ({ user }) => {
         </div>
 
         {/* Interactive Tinder Action Buttons */}
-        <div className="card-actions justify-center items-center gap-6 mt-3 pt-2 border-t border-base-200/50 select-none">
-          {/* Dislike/Ignore Button */}
-          <button
-            aria-label="Pass"
-            className="btn btn-circle btn-lg border-2 border-rose-500/20 bg-rose-500/5 text-rose-500 hover:bg-rose-500 hover:border-rose-500 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-md hover:shadow-rose-500/20"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-7 w-7"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2.5"
+        {showButtons && (
+          <div className="card-actions justify-center items-center gap-6 mt-3 pt-2 border-t border-base-200/50 select-none">
+            {/* Dislike/Ignore Button */}
+            <button
+              aria-label="Pass"
+              className="btn btn-circle btn-lg border-2 border-rose-500/20 bg-rose-500/5 text-rose-500 hover:bg-rose-500 hover:border-rose-500 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-md hover:shadow-rose-500/20"
+              onClick={() => handleSendRequest("ignored", _id)}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-7 w-7"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
 
-          {/* Super Like Button */}
-          {/* <button
+            {/* Super Like Button */}
+            {/* <button
             aria-label="Super Like"
             className="btn btn-circle btn-md border-2 border-amber-500/20 bg-amber-500/5 text-amber-500 hover:bg-amber-500 hover:border-amber-500 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm hover:shadow-amber-500/20"
           >
@@ -138,27 +162,29 @@ const UserCard = ({ user }) => {
             </svg>
           </button> */}
 
-          {/* Interested Button */}
-          <button
-            aria-label="Interested"
-            className="btn btn-circle btn-lg border-2 border-emerald-500/20 bg-emerald-500/5 text-emerald-500 hover:bg-emerald-500 hover:border-emerald-500 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-md hover:shadow-emerald-500/20"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-7 w-7"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2.5"
+            {/* Interested Button */}
+            <button
+              aria-label="Interested"
+              className="btn btn-circle btn-lg border-2 border-emerald-500/20 bg-emerald-500/5 text-emerald-500 hover:bg-emerald-500 hover:border-emerald-500 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-md hover:shadow-emerald-500/20"
+              onClick={() => handleSendRequest("interested", _id)}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
-            </svg>
-          </button>
-        </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-7 w-7"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

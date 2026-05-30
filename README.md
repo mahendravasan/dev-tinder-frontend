@@ -42,4 +42,8 @@ S2E18:
 
 - Connection page - Implement connections API to show all my connections with redux state management
 - Request page - Implement requests API to show all my received requests with redux state management
-- Accept/Reject connection request functionality => make POST /request/review API call with status and request_id as body parameter
+- Accept/Reject connection request functionality => make POST /request/review API call with status and request_id as params in url
+
+S2E19:
+
+- Insterested/Ignores user card functionality from the feed page => make POST /request/send/:status/:id API call with status and user id as params in url

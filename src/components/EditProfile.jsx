@@ -93,7 +93,9 @@ const EditProfile = ({ user, setPreviewUser }) => {
       errors.firstName = "First name must be at least 3 characters";
     }
 
-    if (age && (Number(age) < 18 || Number(age) > 100)) {
+    if (!age) {
+      errors.age = "Age is required";
+    } else if (age && (Number(age) < 18 || Number(age) > 100)) {
       errors.age = "Developer age must be between 18 and 100";
     }
 
@@ -275,7 +277,7 @@ const EditProfile = ({ user, setPreviewUser }) => {
             <div className="form-control w-full">
               <label className="label py-1">
                 <span className="label-text text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Age
+                  Age <span className="text-pink-500">*</span>
                 </span>
               </label>
               <input

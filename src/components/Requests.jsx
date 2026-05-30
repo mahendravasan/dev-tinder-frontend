@@ -37,14 +37,36 @@ const Toast = ({ message, type, onClose }) => {
 
   return (
     <div className="toast toast-top toast-end z-50 m-4 animate-fade-in">
-      <div className={`alert ${alertClass} text-white border-none shadow-2xl rounded-2xl flex items-center gap-2.5 p-4`}>
+      <div
+        className={`alert ${alertClass} text-white border-none shadow-2xl rounded-2xl flex items-center gap-2.5 p-4`}
+      >
         {type === "accepted" ? (
-          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-current shrink-0 h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2.5"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-current shrink-0 h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2.5"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         )}
         <span className="font-semibold text-sm">{message}</span>
@@ -61,11 +83,11 @@ const Requests = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [genderFilter, setGenderFilter] = useState("all");
-  
+
   // Interactive Overlays
   const [selectedUser, setSelectedUser] = useState(null);
   const [toast, setToast] = useState(null);
-  
+
   // Track swipe animation per card ID: { [requestId]: "accepted" | "rejected" }
   const [swipingCards, setSwipingCards] = useState({});
 
@@ -89,7 +111,7 @@ const Requests = () => {
   }, []);
 
   const handleReviewRequest = async (status, requestId, developerName) => {
-    if (swipingCards[requestId]) return;
+    if (swipingCards[requestId]) return; //This stops a double-click from firing the whole thing twice
 
     // Trigger swipe-out animation
     setSwipingCards((prev) => ({ ...prev, [requestId]: status }));
@@ -100,7 +122,7 @@ const Requests = () => {
         await axios.post(
           BASE_URL + "/request/review/" + status + "/" + requestId,
           {},
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         dispatch(removeRequest(requestId));
@@ -134,7 +156,8 @@ const Requests = () => {
     const fromUser = req.fromUserId;
     if (!fromUser) return false;
 
-    const fullName = `${fromUser.firstName || ""} ${fromUser.lastName || ""}`.toLowerCase();
+    const fullName =
+      `${fromUser.firstName || ""} ${fromUser.lastName || ""}`.toLowerCase();
     const skills = (fromUser.skills || []).map((s) => s.toLowerCase());
     const query = searchQuery.toLowerCase();
 
@@ -153,11 +176,18 @@ const Requests = () => {
 
   const genderTheme = {
     male: { badge: "bg-sky-500/10 text-sky-400 border-sky-500/20", icon: "♂️" },
-    female: { badge: "bg-rose-500/10 text-rose-400 border-rose-500/20", icon: "♀️" },
-    other: { badge: "bg-purple-500/10 text-purple-400 border-purple-500/20", icon: "⚧️" },
+    female: {
+      badge: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+      icon: "♀️",
+    },
+    other: {
+      badge: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+      icon: "⚧️",
+    },
   };
 
-  const getGenderStyle = (g) => genderTheme[g?.toLowerCase()] || genderTheme.other;
+  const getGenderStyle = (g) =>
+    genderTheme[g?.toLowerCase()] || genderTheme.other;
 
   return (
     <div className="relative min-h-[85vh] w-full bg-slate-950 text-slate-100 py-12 px-4 md:px-8 overflow-hidden flex flex-col items-center">
@@ -223,7 +253,8 @@ const Requests = () => {
               </span>
             </h1>
             <p className="text-slate-400 text-sm mt-1 font-medium">
-              Review incoming connection requests from developers interested in matching with you.
+              Review incoming connection requests from developers interested in
+              matching with you.
             </p>
           </div>
 
@@ -296,7 +327,7 @@ const Requests = () => {
             {filteredRequests.map((req) => {
               const user = req.fromUserId;
               const genderStyle = getGenderStyle(user.gender);
-              
+
               // Apply swipe classes dynamically based on swiped card state
               let swipeClass = "";
               if (swipingCards[req._id] === "accepted") {
@@ -323,7 +354,9 @@ const Requests = () => {
 
                     {/* Gender badge top-right */}
                     <div className="absolute top-3.5 right-3.5">
-                      <span className={`badge border text-xs py-2 px-2.5 rounded-xl font-bold shadow-md bg-slate-950/80 backdrop-blur-md ${genderStyle.badge}`}>
+                      <span
+                        className={`badge border text-xs py-2 px-2.5 rounded-xl font-bold shadow-md bg-slate-950/80 backdrop-blur-md ${genderStyle.badge}`}
+                      >
                         <span className="mr-1">{genderStyle.icon}</span>
                         {user.gender || "Developer"}
                       </span>
@@ -346,19 +379,22 @@ const Requests = () => {
                   <div className="p-4 flex-grow flex flex-col justify-between gap-4 bg-slate-900/20">
                     {/* Bio */}
                     <p className="text-slate-400 text-xs line-clamp-2 leading-relaxed min-h-[32px] select-text">
-                      {user.about || "This developer is eager to collaborate! Accept their request to learn more about their projects and skills."}
+                      {user.about || "No bio added yet."}
                     </p>
 
                     {/* Skills pill cloud (first 3 + count) */}
                     <div className="flex flex-wrap gap-1 mt-auto">
-                      {(user.skills || ["Frontend", "Backend"]).slice(0, 3).map((skill, index) => (
-                        <span
-                          key={index}
-                          className="badge badge-outline border-slate-800 text-[10px] text-slate-300 font-semibold py-2 px-2 select-none"
-                        >
-                          {skill}
+                      {user.skills && user.skills.length > 0 ? (
+                        user.skills.slice(0, 3).map((skill, i) => (
+                          <span key={i} className="badge badge-outline ...">
+                            {skill}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[10px] text-slate-500 italic">
+                          No skills listed
                         </span>
-                      ))}
+                      )}
                       {(user.skills || []).length > 3 && (
                         <span className="badge badge-outline bg-rose-500/10 border-none text-[10px] text-rose-400 font-bold py-2 px-2 select-none">
                           +{user.skills.length - 3} more
@@ -381,7 +417,11 @@ const Requests = () => {
                         {/* Reject Button (Pass) */}
                         <button
                           onClick={() =>
-                            handleReviewRequest("rejected", req._id, user.firstName)
+                            handleReviewRequest(
+                              "rejected",
+                              req._id,
+                              user.firstName,
+                            )
                           }
                           className="btn btn-sm flex-1 rounded-xl bg-slate-800 hover:bg-rose-950/65 text-slate-300 hover:text-rose-400 border border-slate-700/35 hover:border-rose-900/40 text-xs font-extrabold transition-all duration-300"
                         >
@@ -391,7 +431,11 @@ const Requests = () => {
                         {/* Accept Button (Interested) */}
                         <button
                           onClick={() =>
-                            handleReviewRequest("accepted", req._id, user.firstName)
+                            handleReviewRequest(
+                              "accepted",
+                              req._id,
+                              user.firstName,
+                            )
                           }
                           className="btn btn-sm flex-1 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 border-none text-white text-xs font-black transition-all duration-300 hover:scale-[1.02] shadow-md shadow-rose-500/10"
                         >
@@ -462,16 +506,25 @@ const Requests = () => {
             <div className="px-6 pb-6 relative -mt-16 flex flex-col gap-4">
               <div className="avatar">
                 <div className="w-28 h-28 rounded-full border-4 border-slate-900 shadow-xl bg-slate-800">
-                  <img src={selectedUser.photoUrl || "https://i.pravatar.cc/150"} alt={selectedUser.firstName} />
+                  <img
+                    src={selectedUser.photoUrl || "https://i.pravatar.cc/150"}
+                    alt={selectedUser.firstName}
+                  />
                 </div>
               </div>
 
               <div>
                 <h2 className="text-2xl font-black text-white flex items-center gap-2">
                   {selectedUser.firstName} {selectedUser.lastName}
-                  {selectedUser.age && <span className="text-lg font-normal text-slate-400">, {selectedUser.age}</span>}
+                  {selectedUser.age && (
+                    <span className="text-lg font-normal text-slate-400">
+                      , {selectedUser.age}
+                    </span>
+                  )}
                 </h2>
-                <span className={`badge border text-xs py-2 px-2.5 rounded-lg mt-1 font-bold ${getGenderStyle(selectedUser.gender).badge}`}>
+                <span
+                  className={`badge border text-xs py-2 px-2.5 rounded-lg mt-1 font-bold ${getGenderStyle(selectedUser.gender).badge}`}
+                >
                   {selectedUser.gender || "Developer"}
                 </span>
               </div>
@@ -480,17 +533,29 @@ const Requests = () => {
 
               {/* Biography */}
               <div className="space-y-1.5">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">About Developer</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  About Developer
+                </h3>
                 <p className="text-sm text-slate-300 leading-relaxed">
-                  {selectedUser.about || "This user is ready to pair program! Accept their connection request to start exchanging direct messages."}
+                  {selectedUser.about ||
+                    "This user is ready to pair program! Accept their connection request to start exchanging direct messages."}
                 </p>
               </div>
 
               {/* Skills Tags */}
               <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Programming Stack</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Programming Stack
+                </h3>
                 <div className="flex flex-wrap gap-1.5">
-                  {(selectedUser.skills || ["Frontend", "Backend", "React", "NodeJS"]).map((skill, idx) => (
+                  {(
+                    selectedUser.skills || [
+                      "Frontend",
+                      "Backend",
+                      "React",
+                      "NodeJS",
+                    ]
+                  ).map((skill, idx) => (
                     <span
                       key={idx}
                       className="badge badge-outline border-slate-800 hover:border-rose-500 hover:text-rose-455 transition-colors duration-200 text-xs text-slate-200 py-2.5 px-3 font-semibold"
@@ -503,7 +568,9 @@ const Requests = () => {
 
               {/* Mock Developer Coordinates */}
               <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Developer Coordinates</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Developer Coordinates
+                </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   <div className="flex items-center gap-2 bg-slate-950/40 p-2.5 rounded-xl border border-slate-850">
                     <span>🐙 GitHub:</span>
@@ -521,7 +588,10 @@ const Requests = () => {
               </div>
             </div>
           </div>
-          <div className="modal-backdrop bg-slate-950/85 backdrop-blur-sm" onClick={() => setSelectedUser(null)}></div>
+          <div
+            className="modal-backdrop bg-slate-950/85 backdrop-blur-sm"
+            onClick={() => setSelectedUser(null)}
+          ></div>
         </div>
       )}
     </div>

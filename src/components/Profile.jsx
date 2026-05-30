@@ -56,7 +56,7 @@ const Profile = () => {
               </p>
             </div>
             <div className="w-full max-w-sm sm:max-w-md">
-              <UserCard user={previewUser} />
+              <UserCard user={previewUser} showButtons={false} />
             </div>
           </div>
         )}
