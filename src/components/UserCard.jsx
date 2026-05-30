@@ -1,14 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { removeUserFromFeed } from "../utils/feedSlic";
 
-const UserCard = ({ user, showButtons = true }) => {
+const UserCard = ({ user, showButtons = true, onSwipe }) => {
+  if (!user) return null;
+
   const { _id, firstName, lastName, gender, age, photoUrl, about, skills } =
     user;
 
   const dispatch = useDispatch();
+
+  // Gesture swiping states
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [swipeDirection, setSwipeDirection] = useState(null); // "left" or "right"
 
   // Modern Tailwind-v4 mapping for gender badges
   const genderTheme = {
@@ -49,8 +57,93 @@ const UserCard = ({ user, showButtons = true }) => {
     }
   };
 
+  // Touch & Mouse Drag Handlers for tactile Tinder-swiping
+  const handleDragStart = (e) => {
+    if (!showButtons || swipeDirection) return;
+    
+    // Support touch and mouse coords
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    setDragStart({ x: clientX, y: clientY });
+    setIsDragging(true);
+  };
+
+  const handleDragMove = (e) => {
+    if (!isDragging || swipeDirection) return;
+    
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    const offsetX = clientX - dragStart.x;
+    const offsetY = clientY - dragStart.y;
+    
+    setDragOffset({ x: offsetX, y: offsetY });
+  };
+
+  const handleDragEnd = () => {
+    if (!isDragging || swipeDirection) return;
+    setIsDragging(false);
+    
+    const threshold = 120; // 120px threshold to trigger swipe action
+    if (dragOffset.x > threshold) {
+      triggerSwipe("interested", "right");
+    } else if (dragOffset.x < -threshold) {
+      triggerSwipe("ignored", "left");
+    } else {
+      // Snap back to original position
+      setDragOffset({ x: 0, y: 0 });
+    }
+  };
+
+  const triggerSwipe = (status, direction) => {
+    if (swipeDirection) return;
+    setSwipeDirection(direction);
+    // Push the card completely off screen in the direction of swipe
+    setDragOffset({
+      x: direction === "right" ? 600 : -600,
+      y: dragOffset.y * 1.5, // maintain vertical offset
+    });
+
+    // Wait for exit transition (350ms) before executing action
+    setTimeout(async () => {
+      if (onSwipe) {
+        await onSwipe(status, _id);
+      } else {
+        await handleSendRequest(status, _id);
+      }
+    }, 350);
+  };
+
+  // Compute dynamic card style based on drag offset & swipe state
+  const cardStyle = {
+    transform: swipeDirection
+      ? `translate3d(${swipeDirection === "right" ? "150%" : "-150%"}, ${dragOffset.y}px, 0) rotate(${swipeDirection === "right" ? "25deg" : "-25deg"})`
+      : isDragging
+        ? `translate3d(${dragOffset.x}px, ${dragOffset.y}px, 0) rotate(${dragOffset.x * 0.05}deg)`
+        : "none",
+    transition: isDragging ? "none" : "transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.255), opacity 0.4s ease-out",
+    cursor: showButtons ? (isDragging ? "grabbing" : "grab") : "default",
+    touchAction: "none", // disable mobile vertical scroll while swiping
+    userSelect: "none",
+  };
+
+  // Dynamic stamp overlay opacities
+  const likeOpacity = swipeDirection === "right" ? 1 : Math.max(0, Math.min(1, dragOffset.x / 120));
+  const nopeOpacity = swipeDirection === "left" ? 1 : Math.max(0, Math.min(1, -dragOffset.x / 120));
+
   return (
-    <div className="card w-full bg-base-100 shadow-2xl border border-base-200/50 rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-3xl hover:scale-[1.01] flex flex-col max-w-sm sm:max-w-md mx-auto">
+    <div
+      style={cardStyle}
+      onMouseDown={handleDragStart}
+      onMouseMove={handleDragMove}
+      onMouseUp={handleDragEnd}
+      onMouseLeave={handleDragEnd}
+      onTouchStart={handleDragStart}
+      onTouchMove={handleDragMove}
+      onTouchEnd={handleDragEnd}
+      className="card w-full bg-base-100 shadow-2xl border border-base-200/50 rounded-3xl overflow-hidden flex flex-col max-w-sm sm:max-w-md mx-auto relative select-none"
+    >
       {/* Immersive Image Container */}
       <figure className="relative h-[360px] sm:h-[400px] w-full overflow-hidden select-none bg-base-300">
         <img
@@ -58,6 +151,33 @@ const UserCard = ({ user, showButtons = true }) => {
           alt={`${firstName} ${lastName}`}
           className="w-full h-full object-cover select-none pointer-events-none transition-transform duration-700 hover:scale-105"
         />
+
+        {/* Dynamic Stamp Overlays for gorgeous user-friendly tactile feedback */}
+        {showButtons && (
+          <>
+            {/* LIKE Stamp */}
+            <div
+              style={{
+                opacity: likeOpacity,
+                transform: "rotate(-15deg)",
+              }}
+              className="absolute top-8 left-8 border-4 border-emerald-500 text-emerald-500 font-black uppercase text-3xl tracking-widest py-1.5 px-4 rounded-xl pointer-events-none select-none z-20 transition-opacity duration-75 shadow-lg bg-black/10 backdrop-blur-[0.5px]"
+            >
+              LIKE
+            </div>
+
+            {/* NOPE Stamp */}
+            <div
+              style={{
+                opacity: nopeOpacity,
+                transform: "rotate(15deg)",
+              }}
+              className="absolute top-8 right-8 border-4 border-rose-500 text-rose-500 font-black uppercase text-3xl tracking-widest py-1.5 px-4 rounded-xl pointer-events-none select-none z-20 transition-opacity duration-75 shadow-lg bg-black/10 backdrop-blur-[0.5px]"
+            >
+              NOPE
+            </div>
+          </>
+        )}
 
         {/* Soft, rich ambient gradient overlay over image bottom for excellent contrast */}
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/85 via-neutral-900/20 to-transparent"></div>
@@ -129,7 +249,10 @@ const UserCard = ({ user, showButtons = true }) => {
             <button
               aria-label="Pass"
               className="btn btn-circle btn-lg border-2 border-rose-500/20 bg-rose-500/5 text-rose-500 hover:bg-rose-500 hover:border-rose-500 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-md hover:shadow-rose-500/20"
-              onClick={() => handleSendRequest("ignored", _id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                triggerSwipe("ignored", "left");
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -147,26 +270,14 @@ const UserCard = ({ user, showButtons = true }) => {
               </svg>
             </button>
 
-            {/* Super Like Button */}
-            {/* <button
-            aria-label="Super Like"
-            className="btn btn-circle btn-md border-2 border-amber-500/20 bg-amber-500/5 text-amber-500 hover:bg-amber-500 hover:border-amber-500 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm hover:shadow-amber-500/20"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-          </button> */}
-
             {/* Interested Button */}
             <button
               aria-label="Interested"
               className="btn btn-circle btn-lg border-2 border-emerald-500/20 bg-emerald-500/5 text-emerald-500 hover:bg-emerald-500 hover:border-emerald-500 hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-md hover:shadow-emerald-500/20"
-              onClick={() => handleSendRequest("interested", _id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                triggerSwipe("interested", "right");
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
