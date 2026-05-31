@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { removeUserFromFeed } from "../utils/feedSlic";
+import { removeUserFromFeed } from "../utils/feedSlice";
 
 const UserCard = ({ user, showButtons = true, onSwipe }) => {
   if (!user) return null;
