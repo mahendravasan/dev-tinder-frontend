@@ -109,7 +109,13 @@ const Feed = () => {
       // Remove the user from Redux feed
       dispatch(removeUserFromFeed(userId));
     } catch (error) {
-      console.log("error:", error);
+      console.error("API error during swipe:", error);
+      setToast({
+        message: `Failed to send request: ${error.response?.data?.message || error.message || "Server Error"}`,
+        type: "error",
+      });
+      // Rethrow to let the UserCard component handle the error/snapback state
+      throw error;
     }
   };
 

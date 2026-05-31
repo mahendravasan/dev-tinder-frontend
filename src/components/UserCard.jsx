@@ -1,16 +1,10 @@
 import React, { useState } from "react";
-import { BASE_URL } from "../utils/constants";
-import { useDispatch } from "react-redux";
-import axios from "axios";
-import { removeUserFromFeed } from "../utils/feedSlice";
 
 const UserCard = ({ user, showButtons = true, onSwipe }) => {
   if (!user) return null;
 
   const { _id, firstName, lastName, gender, age, photoUrl, about, skills } =
     user;
-
-  const dispatch = useDispatch();
 
   // Gesture swiping states
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -41,21 +35,6 @@ const UserCard = ({ user, showButtons = true, onSwipe }) => {
   };
 
   const currentGender = genderTheme[gender?.toLowerCase()] || genderTheme.other;
-
-  const handleSendRequest = async (status, userId) => {
-    try {
-      const res = await axios.post(
-        BASE_URL + "/request/send/" + status + "/" + userId,
-        {},
-        {
-          withCredentials: true,
-        },
-      );
-      dispatch(removeUserFromFeed(userId));
-    } catch (error) {
-      console.log("error:", error);
-    }
-  };
 
   // Touch & Mouse Drag Handlers for tactile Tinder-swiping
   const handleDragStart = (e) => {
@@ -107,10 +86,15 @@ const UserCard = ({ user, showButtons = true, onSwipe }) => {
 
     // Wait for exit transition (350ms) before executing action
     setTimeout(async () => {
-      if (onSwipe) {
-        await onSwipe(status, _id);
-      } else {
-        await handleSendRequest(status, _id);
+      try {
+        if (onSwipe) {
+          await onSwipe(status, _id);
+        }
+      } catch (error) {
+        // If the swipe/request fails, snap the card back to the center of the deck
+        setSwipeDirection(null);
+        setDragOffset({ x: 0, y: 0 });
+        setIsDragging(false);
       }
     }, 350);
   };
