@@ -4,6 +4,7 @@ import { addFeed, removeUserFromFeed } from "../utils/feedSlic";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import UserCard from "./UserCard";
+import { Link } from "react-router-dom";
 
 // Gorgeous Custom Toast Notification
 const Toast = ({ message, type, onClose }) => {
@@ -197,18 +198,18 @@ const Feed = () => {
             </p>
 
             <div className="flex flex-col w-full gap-3">
-              <a
-                href="/connections"
+              <Link
+                to="/connections"
                 className="btn btn-primary bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 border-none w-full py-3.5 rounded-2xl text-white font-extrabold shadow-lg shadow-rose-500/15 hover:scale-[1.02] transition-transform duration-300"
               >
                 💬 View Matches
-              </a>
-              <a
-                href="/requests"
+              </Link>
+              <Link
+                to="/requests"
                 className="btn btn-ghost hover:bg-slate-800/40 text-slate-350 hover:text-white w-full rounded-2xl font-bold"
               >
                 📥 Review Requests
-              </a>
+              </Link>
             </div>
           </div>
         )}

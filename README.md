@@ -47,3 +47,4 @@ S2E18:
 S2E19:
 
 - Insterested/Ignores user card functionality from the feed page => make POST /request/send/:status/:id API call with status and user id as params in url
+- Implement user sign up functionality

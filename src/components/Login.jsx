@@ -6,6 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
 
 const Login = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -38,8 +43,81 @@ const Login = () => {
     }
   };
 
+  const handleSignup = async () => {
+    if (!firstName.trim()) {
+      setErrorMessage("First name is required");
+      return;
+    }
+    if (!lastName.trim()) {
+      setErrorMessage("Last name is required");
+      return;
+    }
+    if (!age) {
+      setErrorMessage("Age is required");
+      return;
+    }
+    const ageNum = parseInt(age);
+    if (isNaN(ageNum) || ageNum < 18) {
+      setErrorMessage("You must be at least 18 years old");
+      return;
+    } else if (ageNum > 100) {
+      setErrorMessage("You must be below 100 years old");
+      return;
+    }
+    if (!gender) {
+      setErrorMessage("Gender selection is required");
+      return;
+    }
+    if (!email.trim()) {
+      setErrorMessage("Email address is required");
+      return;
+    }
+    if (!password) {
+      setErrorMessage("Password is required");
+      return;
+    }
+    setErrorMessage("");
+    try {
+      const res = await axios.post(
+        BASE_URL + "/signup",
+        {
+          firstName,
+          lastName,
+          age: ageNum,
+          gender,
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      const data = res?.data?.data;
+      if (data) {
+        dispatch(addUser(data));
+        navigate("/profile");
+      } else {
+        throw new Error("Invalid server response format");
+      }
+    } catch (error) {
+      console.log(error);
+      setErrorMessage(error?.response?.data?.message || "Something went wrong");
+    }
+  };
+
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const toggleFormMode = () => {
+    setIsLogin(!isLogin);
+    setEmail("");
+    setPassword("");
+    setFirstName("");
+    setLastName("");
+    setAge("");
+    setGender("");
+    setErrorMessage("");
   };
 
   return (
@@ -61,16 +139,185 @@ const Login = () => {
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight">
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-                Developer Sign In
+                {isLogin ? "Developer Sign In" : "Developer Sign Up"}
               </span>
             </h2>
             <p className="text-slate-400 text-sm mt-2 font-medium">
-              Welcome back! Connect with peers and collaborate on cool code
+              {isLogin
+                ? "Welcome back! Connect with peers and collaborate on cool code"
+                : "Join our community! Connect with peers and collaborate on cool code"}
             </p>
           </div>
 
-          {/* Login Form */}
+          {/* Form */}
           <form className="space-y-5">
+            {/* SIGNUP FIELDS (Only for Signup) */}
+            {!isLogin && (
+              <>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="form-control w-full">
+                    <label className="label py-1">
+                      <span className="label-text text-xs font-bold uppercase tracking-wider text-slate-400">
+                        First Name
+                      </span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4.5 w-4.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                      </span>
+                      <input
+                        type="text"
+                        placeholder="Jane"
+                        value={firstName}
+                        className="input input-bordered w-full pl-10 bg-slate-950/40 border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
+                        required
+                        onChange={(e) => setFirstName(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-control w-full">
+                    <label className="label py-1">
+                      <span className="label-text text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Last Name
+                      </span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4.5 w-4.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                      </span>
+                      <input
+                        type="text"
+                        placeholder="Doe"
+                        value={lastName}
+                        className="input input-bordered w-full pl-10 bg-slate-950/40 border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
+                        required
+                        onChange={(e) => setLastName(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 mt-2">
+                  <div className="form-control w-full">
+                    <label className="label py-1">
+                      <span className="label-text text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Age
+                      </span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4.5 w-4.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </span>
+                      <input
+                        type="number"
+                        placeholder="18"
+                        value={age}
+                        min="18"
+                        max="120"
+                        className="input input-bordered w-full pl-10 bg-slate-950/40 border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
+                        required
+                        onChange={(e) => setAge(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-control w-full">
+                    <label className="label py-1">
+                      <span className="label-text text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Gender
+                      </span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4.5 w-4.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"
+                          />
+                        </svg>
+                      </span>
+                      <select
+                        value={gender}
+                        className="select select-bordered w-full pl-10 bg-slate-950/40 border-slate-800 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
+                        required
+                        onChange={(e) => setGender(e.target.value)}
+                      >
+                        <option value="" disabled className="text-slate-600">
+                          Select Gender
+                        </option>
+                        <option
+                          value="male"
+                          className="text-slate-200 bg-slate-900"
+                        >
+                          Male
+                        </option>
+                        <option
+                          value="female"
+                          className="text-slate-200 bg-slate-900"
+                        >
+                          Female
+                        </option>
+                        <option
+                          value="others"
+                          className="text-slate-200 bg-slate-900"
+                        >
+                          Others
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
             {/* EMAIL ID */}
             <div className="form-control w-full">
               <label className="label py-1">
@@ -115,12 +362,14 @@ const Login = () => {
                     Password
                   </span>
                 </label>
-                <a
-                  href="#forgot"
-                  className="text-xs text-purple-400 hover:text-purple-300 font-semibold hover:underline focus:outline-none transition-colors"
-                >
-                  Forgot?
-                </a>
+                {isLogin && (
+                  <a
+                    href="#forgot"
+                    className="text-xs text-purple-400 hover:text-purple-300 font-semibold hover:underline focus:outline-none transition-colors"
+                  >
+                    Forgot?
+                  </a>
+                )}
               </div>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
@@ -203,11 +452,15 @@ const Login = () => {
               className="btn w-full mt-6 bg-linear-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-bold text-sm tracking-wider uppercase border-none hover:shadow-[0_0_20px_rgba(236,72,153,0.4)] transition-all duration-300 transform active:scale-[0.98] py-4 h-auto min-h-0 rounded-2xl"
               onClick={(e) => {
                 e.preventDefault();
-                handleLogin();
+                if (isLogin) {
+                  handleLogin();
+                } else {
+                  handleSignup();
+                }
               }}
             >
               <span className="flex items-center justify-center gap-1.5">
-                <span>Login</span>
+                <span>{isLogin ? "Login" : "Sign Up"}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4.5 w-4.5"
@@ -231,13 +484,16 @@ const Login = () => {
 
           <div className="text-center">
             <p className="text-xs text-slate-400 font-medium">
-              Ready to code with matches?
-              <a
-                href="#signup"
+              {isLogin
+                ? "Ready to code with matches?"
+                : "Already have an account?"}
+              <button
+                type="button"
+                onClick={toggleFormMode}
                 className="ml-1.5 text-purple-400 hover:text-purple-300 font-bold hover:underline focus:outline-none transition-colors"
               >
-                Create Account Here
-              </a>
+                {isLogin ? "Create Account Here" : "Login Here"}
+              </button>
             </p>
           </div>
         </div>
