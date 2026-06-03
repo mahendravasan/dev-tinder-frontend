@@ -3,7 +3,8 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnection } from "../utils/connectionSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { removeUser } from "../utils/userSlice";
 
 // Modern Skeleton Loading Card
 const SkeletonCard = () => (
@@ -57,6 +58,7 @@ const Connections = () => {
   const dispatch = useDispatch();
   const connections = useSelector((store) => store.connection);
   const currentUser = useSelector((store) => store.user);
+  const navigate = useNavigate();
 
   // Stateful UI states
   const [isLoading, setIsLoading] = useState(true);
@@ -82,6 +84,10 @@ const Connections = () => {
       dispatch(addConnection(res?.data?.data || []));
     } catch (error) {
       console.log(error);
+      if (error?.response?.status === 401) {
+        dispatch(removeUser());
+        navigate("/login");
+      }
       dispatch(addConnection([]));
     } finally {
       setIsLoading(false);

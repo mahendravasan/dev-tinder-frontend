@@ -4,7 +4,8 @@ import { addFeed, removeUserFromFeed } from "../utils/feedSlice";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import UserCard from "./UserCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { removeUser } from "../utils/userSlice";
 
 // Gorgeous Custom Toast Notification
 const Toast = ({ message, type, onClose }) => {
@@ -61,6 +62,7 @@ const Toast = ({ message, type, onClose }) => {
 const Feed = () => {
   const feed = useSelector((store) => store.feed);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [toast, setToast] = useState(null);
 
   const getFeeds = async () => {
@@ -72,6 +74,10 @@ const Feed = () => {
       dispatch(addFeed(res.data.data));
     } catch (err) {
       console.log(err);
+      if (err?.response?.status === 401) {
+        dispatch(removeUser());
+        navigate("/login");
+      }
     }
   };
 

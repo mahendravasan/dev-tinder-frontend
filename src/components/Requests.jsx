@@ -3,7 +3,8 @@ import { BASE_URL } from "../utils/constants";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addrequest, removeRequest } from "../utils/requestSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { removeUser } from "../utils/userSlice";
 
 // Modern Skeleton Loading Card
 const SkeletonCard = () => (
@@ -78,6 +79,7 @@ const Toast = ({ message, type, onClose }) => {
 const Requests = () => {
   const dispatch = useDispatch();
   const requests = useSelector((store) => store.request);
+  const navigate = useNavigate();
 
   // Stateful UI states
   const [isLoading, setIsLoading] = useState(true);
@@ -100,6 +102,10 @@ const Requests = () => {
       dispatch(addrequest(res?.data?.data || []));
     } catch (error) {
       console.log(error);
+      if (error?.response?.status === 401) {
+        dispatch(removeUser());
+        navigate("/login");
+      }
       dispatch(addrequest([]));
     } finally {
       setIsLoading(false);
