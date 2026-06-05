@@ -3,6 +3,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { BASE_URL } from "../utils/constants";
+import { Sparkles, AlertCircle } from "lucide-react";
 
 const EditProfile = ({ user, setPreviewUser }) => {
   const dispatch = useDispatch();
@@ -194,8 +195,12 @@ const EditProfile = ({ user, setPreviewUser }) => {
             } border backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.4)] rounded-2xl flex justify-between items-center py-3 px-5 transition-all duration-300`}
           >
             <div className="flex items-center gap-2">
-              <span className="text-base">
-                {alert.type === "success" ? "✨" : "⚠️"}
+              <span className="flex items-center">
+                {alert.type === "success" ? (
+                  <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 text-rose-450 shrink-0" />
+                )}
               </span>
               <span className="text-xs font-semibold tracking-wide">
                 {alert.message}

@@ -6,7 +6,7 @@ import { BASE_URL } from "../utils/constants";
 import UserCard from "./UserCard";
 import { Link, useNavigate } from "react-router-dom";
 import { removeUser } from "../utils/userSlice";
-import { Sparkles, Compass, Zap, ArrowRight, Heart } from "lucide-react";
+import { Sparkles, Compass, Zap, ArrowRight, Heart, Search, MessageSquare, UserCheck } from "lucide-react";
 
 // Gorgeous Custom Toast Notification
 const Toast = ({ message, type, onClose }) => {
@@ -345,9 +345,10 @@ const Feed = () => {
                       {synergy.shared.map((skill, index) => (
                         <span
                           key={index}
-                          className="badge badge-outline border-emerald-500/30 bg-emerald-500/5 text-emerald-300 font-bold text-xs py-2.5 px-3 select-none"
+                          className="badge badge-outline border-emerald-500/30 bg-emerald-500/5 text-emerald-300 font-bold text-xs py-2.5 px-3 select-none flex items-center gap-1"
                         >
-                          ✨ {skill}
+                          <Sparkles className="w-3 h-3 text-emerald-400 shrink-0" />
+                          {skill}
                         </span>
                       ))}
                     </div>
@@ -469,7 +470,7 @@ const Feed = () => {
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 px-4 text-center border border-dashed border-slate-800/80 rounded-2xl bg-slate-950/20 my-auto">
-                  <span className="text-2xl mb-2">🔭</span>
+                  <Search className="w-8 h-8 text-indigo-400 mb-2 animate-pulse" />
                   <p className="text-xs font-bold text-slate-400">Spotlight Queue Empty</p>
                   <p className="text-[10px] text-slate-500 mt-1">Check back later for new developers.</p>
                 </div>
@@ -487,7 +488,7 @@ const Feed = () => {
           <div className="relative mb-8">
             <div className="absolute inset-0 bg-gradient-to-tr from-rose-500 to-pink-500 rounded-full blur-2xl opacity-20 animate-heartbeat"></div>
             <div className="w-24 h-24 rounded-full bg-slate-950 border border-slate-800 flex items-center justify-center z-10 relative shadow-inner">
-              <span className="text-4xl animate-pulse">✨</span>
+              <Sparkles className="w-10 h-10 text-rose-400 animate-pulse shrink-0" />
             </div>
           </div>
 
@@ -502,15 +503,17 @@ const Feed = () => {
           <div className="flex flex-col w-full gap-3">
             <Link
               to="/connections"
-              className="btn btn-primary bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 border-none w-full py-3.5 rounded-2xl text-white font-extrabold shadow-lg shadow-rose-500/15 hover:scale-[1.02] transition-transform duration-300"
+              className="btn btn-primary bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 border-none w-full py-3.5 rounded-2xl text-white font-extrabold shadow-lg shadow-rose-500/15 hover:scale-[1.02] transition-transform duration-300 flex items-center justify-center gap-2"
             >
-              💬 View Matches
+              <MessageSquare className="w-4 h-4" />
+              View Matches
             </Link>
             <Link
               to="/requests"
-              className="btn btn-ghost hover:bg-slate-800/40 text-slate-350 hover:text-white w-full rounded-2xl font-bold"
+              className="btn btn-ghost hover:bg-slate-800/40 text-slate-350 hover:text-white w-full rounded-2xl font-bold flex items-center justify-center gap-2"
             >
-              📥 Review Requests
+              <UserCheck className="w-4 h-4" />
+              Review Requests
             </Link>
           </div>
         </div>

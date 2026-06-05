@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Mars, Venus, Transgender, MapPin } from "lucide-react";
 
 const UserCard = ({ user, showButtons = true, onSwipe }) => {
   if (!user) return null;
@@ -17,19 +18,19 @@ const UserCard = ({ user, showButtons = true, onSwipe }) => {
     male: {
       badge:
         "bg-sky-100/90 text-sky-800 border-sky-200 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800/40",
-      icon: "♂️",
+      icon: Mars,
       label: "Male Developer",
     },
     female: {
       badge:
         "bg-rose-100/90 text-rose-800 border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800/40",
-      icon: "♀️",
+      icon: Venus,
       label: "Female Developer",
     },
     other: {
       badge:
         "bg-purple-100/90 text-purple-800 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800/40",
-      icon: "⚧️",
+      icon: Transgender,
       label: "Non-Binary Dev",
     },
   };
@@ -169,9 +170,11 @@ const UserCard = ({ user, showButtons = true, onSwipe }) => {
         {/* Visual Gender/Dev Badge inside Image (Top-Right) */}
         <div className="absolute top-4 right-4">
           <span
-            className={`badge badge-md py-3.5 px-4 font-bold shadow-lg border backdrop-blur-md bg-opacity-80 transition-all duration-300 hover:scale-105 ${currentGender.badge}`}
+            className={`badge badge-md py-3.5 px-4 font-bold shadow-lg border backdrop-blur-md bg-opacity-80 transition-all duration-300 hover:scale-105 flex items-center ${currentGender.badge}`}
           >
-            <span className="mr-1.5">{currentGender.icon}</span>{" "}
+            <span className="mr-1.5 flex items-center">
+              <currentGender.icon className="w-4 h-4 shrink-0" />
+            </span>{" "}
             {gender || "Developer"}
           </span>
         </div>
@@ -190,7 +193,10 @@ const UserCard = ({ user, showButtons = true, onSwipe }) => {
           </div>
 
           <div className="flex items-center gap-1.5 text-xs text-neutral-200 mt-1 select-none font-medium">
-            <span>📍 Tech Hub</span>
+            <span className="flex items-center gap-1">
+              <MapPin className="w-3.5 h-3.5 text-neutral-350 shrink-0" />
+              Tech Hub
+            </span>
             <span className="opacity-50">•</span>
             <span>Active recently</span>
           </div>

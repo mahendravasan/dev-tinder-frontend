@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
+import { Terminal } from "lucide-react";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -133,9 +134,7 @@ const Login = () => {
           {/* Brand / Logo and Subtitle */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center p-3.5 bg-gradient-to-tr from-pink-500/10 via-purple-500/10 to-indigo-500/10 rounded-2xl border border-purple-500/20 mb-3 shadow-inner">
-              <span className="text-3xl filter drop-shadow-[0_0_10px_rgba(168,85,247,0.4)]">
-                👨‍💻
-              </span>
+              <Terminal className="w-8 h-8 text-purple-400 filter drop-shadow-[0_0_10px_rgba(168,85,247,0.4)]" />
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight">
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addConnection } from "../utils/connectionSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { removeUser } from "../utils/userSlice";
+import { Mars, Venus, Transgender, Search, Info, MessageSquare, Trash2, Heart, Mail } from "lucide-react";
 
 // Modern Skeleton Loading Card
 const SkeletonCard = () => (
@@ -223,14 +224,14 @@ const Connections = () => {
   });
 
   const genderTheme = {
-    male: { badge: "bg-sky-500/10 text-sky-400 border-sky-500/20", icon: "♂️" },
+    male: { badge: "bg-sky-500/10 text-sky-400 border-sky-500/20", icon: Mars },
     female: {
       badge: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-      icon: "♀️",
+      icon: Venus,
     },
     other: {
       badge: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-      icon: "⚧️",
+      icon: Transgender,
     },
   };
 
@@ -304,10 +305,8 @@ const Connections = () => {
         {/* Dashboard Control Bar */}
         <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between bg-slate-900/40 backdrop-blur-xl border border-slate-900 p-4 rounded-3xl shadow-xl">
           {/* Live Search Input */}
-          <div className="relative flex-grow max-w-lg">
-            <span className="absolute inset-y-0 left-4 flex items-center text-slate-500 pointer-events-none">
-              🔍
-            </span>
+          <div className="relative flex-grow max-w-lg flex items-center">
+            <Search className="w-4 h-4 text-slate-500 absolute left-4 pointer-events-none" />
             <input
               type="text"
               placeholder="Search by developer name or skills..."
@@ -385,9 +384,11 @@ const Connections = () => {
                     {/* Gender badge top-right */}
                     <div className="absolute top-3.5 right-3.5">
                       <span
-                        className={`badge border text-xs py-2 px-2.5 rounded-xl font-bold shadow-md bg-slate-950/80 backdrop-blur-md ${genderStyle.badge}`}
+                        className={`badge border text-xs py-2 px-2.5 rounded-xl font-bold shadow-md bg-slate-950/80 backdrop-blur-md flex items-center ${genderStyle.badge}`}
                       >
-                        <span className="mr-1">{genderStyle.icon}</span>
+                        <span className="mr-1 flex items-center">
+                          <genderStyle.icon className="w-3.5 h-3.5 shrink-0" />
+                        </span>
                         {user.gender || "Developer"}
                       </span>
                     </div>
@@ -435,27 +436,28 @@ const Connections = () => {
                       {/* View Profile info */}
                       <button
                         onClick={() => setSelectedUser(user)}
-                        className="btn btn-square btn-ghost btn-sm text-slate-400 hover:text-white rounded-xl hover:bg-slate-800/80 transition-colors duration-200"
+                        className="btn btn-square btn-ghost btn-sm text-slate-400 hover:text-white rounded-xl hover:bg-slate-800/80 transition-colors duration-200 flex items-center justify-center"
                         title="View Full Profile"
                       >
-                        ℹ️
+                        <Info className="w-4 h-4" />
                       </button>
 
                       {/* Chat Drawer open */}
                       <button
                         onClick={() => setActiveChatUser(user)}
-                        className="btn btn-sm flex-grow rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-none text-white text-xs font-bold transition-all duration-300 hover:scale-[1.02]"
+                        className="btn btn-sm flex-grow rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-none text-white text-xs font-bold transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-1.5"
                       >
-                        💬 Chat Now
+                        <MessageSquare className="w-4 h-4" />
+                        Chat Now
                       </button>
 
                       {/* Unmatch Action */}
                       <button
                         onClick={() => setUnmatchTarget(user)}
-                        className="btn btn-square btn-ghost btn-sm text-red-500/60 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors duration-200"
+                        className="btn btn-square btn-ghost btn-sm text-red-500/60 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors duration-200 flex items-center justify-center"
                         title="Unmatch Developer"
                       >
-                        🗑️
+                        <Trash2 className="w-4 h-4 text-red-500/60 hover:text-red-400" />
                       </button>
                     </div>
                   </div>
@@ -471,7 +473,7 @@ const Connections = () => {
                 {/* Halo pulse glow */}
                 <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-3xl animate-heartbeat"></div>
                 <div className="w-24 h-24 rounded-full bg-slate-900 border-2 border-dashed border-purple-500/40 flex items-center justify-center z-10 relative shadow-2xl">
-                  <span className="text-4xl animate-pulse">💖</span>
+                  <Heart className="w-10 h-10 text-purple-500 animate-pulse shrink-0" />
                 </div>
               </div>
               <h3 className="text-2xl font-black tracking-tight text-white mb-2">
@@ -542,11 +544,18 @@ const Connections = () => {
                     </span>
                   )}
                 </h2>
-                <span
-                  className={`badge border text-xs py-2 px-2.5 rounded-lg mt-1 font-bold ${getGenderStyle(selectedUser.gender).badge}`}
-                >
-                  {selectedUser.gender || "Developer"}
-                </span>
+                {(() => {
+                  const style = getGenderStyle(selectedUser.gender);
+                  const IconComp = style.icon;
+                  return (
+                    <span
+                      className={`badge border text-xs py-2 px-2.5 rounded-lg mt-1 font-bold flex items-center gap-1 ${style.badge}`}
+                    >
+                      <IconComp className="w-3.5 h-3.5 shrink-0" />
+                      {selectedUser.gender || "Developer"}
+                    </span>
+                  );
+                })()}
               </div>
 
               <div className="divider border-slate-850 m-0"></div>
@@ -586,7 +595,10 @@ const Connections = () => {
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   <div className="flex items-center gap-2 bg-slate-950/40 p-2.5 rounded-xl border border-slate-850">
-                    <span>🐙 GitHub:</span>
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-slate-400 shrink-0">
+                      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                    </svg>
+                    <span className="font-semibold text-slate-350">GitHub:</span>
                     <a
                       href={`https://github.com/${selectedUser.firstName?.toLowerCase()}`}
                       target="_blank"
@@ -597,7 +609,8 @@ const Connections = () => {
                     </a>
                   </div>
                   <div className="flex items-center gap-2 bg-slate-950/40 p-2.5 rounded-xl border border-slate-850">
-                    <span>📧 Email:</span>
+                    <Mail className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span className="font-semibold text-slate-355">Email:</span>
                     <span className="text-slate-300 font-semibold">
                       {selectedUser.firstName?.toLowerCase()}@devtinder.io
                     </span>
@@ -611,9 +624,10 @@ const Connections = () => {
                   setActiveChatUser(selectedUser);
                   setSelectedUser(null);
                 }}
-                className="btn btn-primary bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-none text-white w-full rounded-2xl mt-2 font-bold"
+                className="btn btn-primary bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-none text-white w-full rounded-2xl mt-2 font-bold flex items-center justify-center gap-2"
               >
-                💬 Open Dialogue Chat
+                <MessageSquare className="w-4.5 h-4.5" />
+                Open Dialogue Chat
               </button>
             </div>
           </div>

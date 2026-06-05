@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Heart, UserPlus, User, LogOut } from "lucide-react";
+import { Heart, UserPlus, User, LogOut, Code } from "lucide-react";
 import { BASE_URL } from "../utils/constants";
 import { removeUser } from "../utils/userSlice";
 import { clearFeed } from "../utils/feedSlice";
@@ -60,8 +60,11 @@ const NavBar = () => {
     <div className="navbar bg-base-300 shadow-md px-4 md:px-8 border-b border-base-200">
       <div className="flex-1">
         <Link to="/" className="flex items-center gap-2">
-          <span className="btn btn-ghost text-xl font-black bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-200">
-            👨‍💻DevTinder
+          <span className="btn btn-ghost text-xl font-black hover:scale-105 transition-transform duration-200 flex items-center gap-1.5">
+            <Code className="w-6 h-6 text-rose-500 shrink-0" />
+            <span className="bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
+              DevTinder
+            </span>
           </span>
         </Link>
       </div>
