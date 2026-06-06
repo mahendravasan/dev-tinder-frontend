@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
@@ -18,6 +18,12 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const passwordInputRef = useRef(null);
+
+  const handleInputChange = (setter) => (e) => {
+    setter(e.target.value);
+    setErrorMessage("");
+  };
 
   const handleLogin = async () => {
     try {
@@ -41,6 +47,7 @@ const Login = () => {
     } catch (error) {
       console.log(error);
       setErrorMessage(error?.response?.data?.message || "Something went wrong");
+      setPassword("");
     }
   };
 
@@ -103,6 +110,7 @@ const Login = () => {
     } catch (error) {
       console.log(error);
       setErrorMessage(error?.response?.data?.message || "Something went wrong");
+      setPassword("");
     }
   };
 
@@ -183,7 +191,7 @@ const Login = () => {
                         value={firstName}
                         className="input input-bordered w-full pl-10 bg-slate-950/40 border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
                         required
-                        onChange={(e) => setFirstName(e.target.value)}
+                        onChange={handleInputChange(setFirstName)}
                       />
                     </div>
                   </div>
@@ -217,7 +225,7 @@ const Login = () => {
                         value={lastName}
                         className="input input-bordered w-full pl-10 bg-slate-950/40 border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
                         required
-                        onChange={(e) => setLastName(e.target.value)}
+                        onChange={handleInputChange(setLastName)}
                       />
                     </div>
                   </div>
@@ -255,7 +263,7 @@ const Login = () => {
                         max="120"
                         className="input input-bordered w-full pl-10 bg-slate-950/40 border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
                         required
-                        onChange={(e) => setAge(e.target.value)}
+                        onChange={handleInputChange(setAge)}
                       />
                     </div>
                   </div>
@@ -287,7 +295,7 @@ const Login = () => {
                         value={gender}
                         className="select select-bordered w-full pl-10 bg-slate-950/40 border-slate-800 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
                         required
-                        onChange={(e) => setGender(e.target.value)}
+                        onChange={handleInputChange(setGender)}
                       >
                         <option value="" disabled className="text-slate-600">
                           Select Gender
@@ -347,7 +355,13 @@ const Login = () => {
                   value={email}
                   className="input input-bordered w-full pl-10 bg-slate-950/40 border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
                   required
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleInputChange(setEmail)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Tab" && !e.shiftKey) {
+                      e.preventDefault();
+                      passwordInputRef.current?.focus();
+                    }
+                  }}
                   autoComplete="username"
                 />
               </div>
@@ -391,9 +405,10 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
+                  ref={passwordInputRef}
                   className="input input-bordered w-full pl-10 pr-10 bg-slate-950/40 border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
                   required
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={handleInputChange(setPassword)}
                   autoComplete="current-password"
                 />
                 <button
