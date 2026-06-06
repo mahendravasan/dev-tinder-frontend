@@ -24,28 +24,32 @@ const EditProfile = ({ user, setPreviewUser }) => {
   const [alert, setAlert] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
 
-  // Dynamic preview synchronizer: updates parent state on every input keystroke
+  // Dynamic preview synchronizer: updates parent state with a debounce to prevent input stuttering
   useEffect(() => {
-    // Gracefully handle parsing of comma-separated skills
-    const parsedSkills = skills
-      ? skills
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
-      : [];
+    const timer = setTimeout(() => {
+      // Gracefully handle parsing of comma-separated skills
+      const parsedSkills = skills
+        ? skills
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [];
 
-    setPreviewUser({
-      ...user,
-      firstName,
-      lastName,
-      age: age ? Number(age) : "",
-      gender,
-      photoUrl:
-        photoUrl ||
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde", // visual fallback
-      about,
-      skills: parsedSkills,
-    });
+      setPreviewUser({
+        ...user,
+        firstName,
+        lastName,
+        age: age ? Number(age) : "",
+        gender,
+        photoUrl:
+          photoUrl ||
+          "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde", // visual fallback
+        about,
+        skills: parsedSkills,
+      });
+    }, 200); // 200ms debounce to keep the input responsive
+
+    return () => clearTimeout(timer);
   }, [
     firstName,
     lastName,
