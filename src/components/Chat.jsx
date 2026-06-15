@@ -46,13 +46,22 @@ const Chat = () => {
   const sendMessage = () => {
     const socket = socketRef.current;
     if (!socket) return;
+    const text = newMessage.trim();
+    if (!text) return;
     socket.emit("sendMessage", {
       firstName: user.firstName,
       userId,
       toUserId,
-      text: newMessage,
+      text,
     });
     setNewMessage("");
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
   };
 
   return (
@@ -115,6 +124,7 @@ const Chat = () => {
             placeholder="Type a message..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="input input-md flex-1 bg-slate-950/60 border border-slate-800 focus:border-purple-500 text-slate-100 rounded-2xl focus:outline-none transition-all duration-200"
           />
           <button
