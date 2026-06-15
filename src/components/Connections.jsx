@@ -5,7 +5,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { addConnection } from "../utils/connectionSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { removeUser } from "../utils/userSlice";
-import { Mars, Venus, Transgender, Search, Info, MessageSquare, Trash2, Heart, Mail } from "lucide-react";
+import {
+  Mars,
+  Venus,
+  Transgender,
+  Search,
+  Info,
+  MessageSquare,
+  Trash2,
+  Heart,
+  Mail,
+} from "lucide-react";
 
 // Modern Skeleton Loading Card
 const SkeletonCard = () => (
@@ -58,7 +68,6 @@ const Toast = ({ message, onClose }) => {
 const Connections = () => {
   const dispatch = useDispatch();
   const connections = useSelector((store) => store.connection);
-  const currentUser = useSelector((store) => store.user);
   const navigate = useNavigate();
 
   // Stateful UI states
@@ -69,12 +78,8 @@ const Connections = () => {
 
   // Interactive Overlays
   const [selectedUser, setSelectedUser] = useState(null);
-  const [activeChatUser, setActiveChatUser] = useState(null);
   const [unmatchTarget, setUnmatchTarget] = useState(null);
   const [toast, setToast] = useState(null);
-
-  // Stateful Mock Chats
-  const [chatMessages, setChatMessages] = useState({});
 
   const fetchConnections = async () => {
     setIsLoading(true);
@@ -99,69 +104,6 @@ const Connections = () => {
     fetchConnections();
   }, []);
 
-  // Initialize or retrieve conversations utilizing developer tags
-  const getOrInitializeChat = (userId, firstName, skills = []) => {
-    if (chatMessages[userId]) return chatMessages[userId];
-
-    const primeSkill = skills.length > 0 ? skills[0] : "development";
-    const initialDialog = [
-      {
-        sender: "them",
-        text: `Hey! Realized we connected on DevTinder. I saw you work with code matching my interests. Are you active with ${primeSkill} lately? 💻`,
-        time: "10:30 AM",
-      },
-      {
-        sender: "me",
-        text: `Hi! Yes, absolutely. I love working with that stack! What project ideas are you thinking about?`,
-        time: "10:32 AM",
-      },
-      {
-        sender: "them",
-        text: `I'm sketching a high-performance developer dashboard. We should definitely pair program or open-source collaborate! 🚀`,
-        time: "10:33 AM",
-      },
-    ];
-
-    setChatMessages((prev) => ({ ...prev, [userId]: initialDialog }));
-    return initialDialog;
-  };
-
-  const handleSendMessage = (text) => {
-    if (!activeChatUser) return;
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    const newMsg = {
-      sender: "me",
-      text,
-      time: formattedTime,
-    };
-
-    setChatMessages((prev) => ({
-      ...prev,
-      [activeChatUser._id]: [...(prev[activeChatUser._id] || []), newMsg],
-    }));
-
-    // Simulated reply from matching developer after 1.5 seconds
-    setTimeout(() => {
-      const reply = {
-        sender: "them",
-        text: "That sounds awesome! Let me clone the repo and review the issues. Let's schedule a Zoom call tomorrow! 👨‍💻🔥",
-        time: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      };
-      setChatMessages((prev) => ({
-        ...prev,
-        [activeChatUser._id]: [...(prev[activeChatUser._id] || []), reply],
-      }));
-    }, 1500);
-  };
-
   const confirmUnmatch = async (id) => {
     if (!unmatchTarget) return;
     try {
@@ -179,7 +121,6 @@ const Connections = () => {
 
       setToast(`Unmatched with ${unmatchTarget.firstName} successfully.`);
 
-      if (activeChatUser?._id === unmatchTarget._id) setActiveChatUser(null);
       if (selectedUser?._id === unmatchTarget._id) setSelectedUser(null);
 
       setUnmatchTarget(null);
@@ -242,10 +183,6 @@ const Connections = () => {
     <div className="relative min-h-[85vh] w-full bg-slate-950 text-slate-100 py-12 px-4 md:px-8 overflow-hidden flex flex-col items-center">
       {/* Self-contained CSS for animations */}
       <style>{`
-        @keyframes slideIn {
-          from { transform: translateX(100%); }
-          to { transform: translateX(0); }
-        }
         @keyframes fadeIn {
           from { opacity: 0; transform: scale(0.98); }
           to { opacity: 1; transform: scale(1); }
@@ -253,9 +190,6 @@ const Connections = () => {
         @keyframes heartbeat {
           0%, 100% { transform: scale(1); }
           50% { transform: scale(1.06); }
-        }
-        .animate-slide-in {
-          animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .animate-fade-in {
           animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -442,14 +376,14 @@ const Connections = () => {
                         <Info className="w-4 h-4" />
                       </button>
 
-                      {/* Chat Drawer open */}
-                      <button
-                        onClick={() => setActiveChatUser(user)}
+                      {/* Chat Now — chat functionality to be built */}
+                      <Link
+                        to={`/chat/${user._id}`}
                         className="btn btn-sm flex-grow rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-none text-white text-xs font-bold transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-1.5"
                       >
                         <MessageSquare className="w-4 h-4" />
                         Chat Now
-                      </button>
+                      </Link>
 
                       {/* Unmatch Action */}
                       <button
@@ -595,10 +529,15 @@ const Connections = () => {
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   <div className="flex items-center gap-2 bg-slate-950/40 p-2.5 rounded-xl border border-slate-850">
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-slate-400 shrink-0">
-                      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-4 h-4 fill-slate-400 shrink-0"
+                    >
+                      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
                     </svg>
-                    <span className="font-semibold text-slate-350">GitHub:</span>
+                    <span className="font-semibold text-slate-350">
+                      GitHub:
+                    </span>
                     <a
                       href={`https://github.com/${selectedUser.firstName?.toLowerCase()}`}
                       target="_blank"
@@ -618,16 +557,10 @@ const Connections = () => {
                 </div>
               </div>
 
-              {/* Chat CTA */}
-              <button
-                onClick={() => {
-                  setActiveChatUser(selectedUser);
-                  setSelectedUser(null);
-                }}
-                className="btn btn-primary bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-none text-white w-full rounded-2xl mt-2 font-bold flex items-center justify-center gap-2"
-              >
+              {/* Chat CTA — chat functionality to be built */}
+              <button className="btn btn-primary bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-none text-white w-full rounded-2xl mt-2 font-bold flex items-center justify-center gap-2">
                 <MessageSquare className="w-4.5 h-4.5" />
-                Open Dialogue Chat
+                Chat Now
               </button>
             </div>
           </div>
@@ -636,141 +569,6 @@ const Connections = () => {
             onClick={() => setSelectedUser(null)}
           ></div>
         </div>
-      )}
-
-      {/* MOCK CHAT DRAWER */}
-      {activeChatUser && (
-        <>
-          <div
-            className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-30"
-            onClick={() => setActiveChatUser(null)}
-          ></div>
-          <div className="fixed inset-y-0 right-0 w-full sm:w-[460px] bg-slate-900 border-l border-slate-850 shadow-2xl z-40 flex flex-col animate-slide-in">
-            {/* Drawer Header */}
-            <div className="p-4 border-b border-slate-850 flex justify-between items-center bg-slate-950/30">
-              <div className="flex items-center gap-3">
-                <div className="avatar online">
-                  <div className="w-11 h-11 rounded-full ring-2 ring-purple-500/80 ring-offset-2 ring-offset-slate-900">
-                    <img
-                      src={activeChatUser.photoUrl}
-                      alt={activeChatUser.firstName}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-white text-base leading-tight">
-                    {activeChatUser.firstName} {activeChatUser.lastName}
-                  </h3>
-                  <span className="text-xs text-emerald-400 font-bold flex items-center gap-1 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    Pairing Match Active
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={() => setActiveChatUser(null)}
-                className="btn btn-ghost btn-circle btn-sm text-slate-400 hover:text-white"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-950/10">
-              {getOrInitializeChat(
-                activeChatUser._id,
-                activeChatUser.firstName,
-                activeChatUser.skills,
-              ).map((msg, index) => {
-                const isMe = msg.sender === "me";
-                return (
-                  <div
-                    key={index}
-                    className={`chat ${isMe ? "chat-end" : "chat-start"} animate-fade-in`}
-                  >
-                    <div className="chat-image avatar">
-                      <div className="w-8 h-8 rounded-full border border-slate-800">
-                        <img
-                          src={
-                            isMe
-                              ? currentUser?.photoUrl || "/default-avatar.png"
-                              : activeChatUser.photoUrl
-                          }
-                          alt="Avatar"
-                        />
-                      </div>
-                    </div>
-                    <div className="chat-header text-[10px] text-slate-500 font-bold tracking-wide mb-1">
-                      {isMe ? "You" : activeChatUser.firstName}
-                      <time className="text-[9px] opacity-40 ml-1.5 font-normal">
-                        {msg.time}
-                      </time>
-                    </div>
-                    <div
-                      className={`chat-bubble text-sm font-semibold rounded-2xl max-w-[85%] leading-relaxed ${
-                        isMe
-                          ? "bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/10"
-                          : "bg-slate-800 border border-slate-700/30 text-slate-100 shadow-sm"
-                      }`}
-                    >
-                      {msg.text}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Suggestions panel */}
-            <div className="px-4 py-2 border-t border-slate-850 bg-slate-950/30 flex flex-col gap-1">
-              <span className="text-[10px] uppercase font-extrabold text-slate-500 tracking-wider">
-                Quick Dev Starters:
-              </span>
-              <div className="flex flex-wrap gap-1.5 mt-1">
-                {[
-                  "Let's pair program!",
-                  "What tech stack are you learning?",
-                  "Collab on a side-project?",
-                ].map((prompt, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleSendMessage(prompt)}
-                    className="text-[10px] py-1 px-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700 border border-slate-750 hover:border-slate-600 text-slate-300 hover:text-white transition-all duration-200"
-                  >
-                    {prompt}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Input area */}
-            <div className="p-4 border-t border-slate-850 bg-slate-950/20">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const val = e.target.msg.value;
-                  if (!val.trim()) return;
-                  handleSendMessage(val);
-                  e.target.msg.value = "";
-                }}
-                className="flex gap-2"
-              >
-                <input
-                  name="msg"
-                  type="text"
-                  placeholder="Type developer message..."
-                  className="input input-md w-full bg-slate-950 border border-slate-800 focus:border-purple-500 text-slate-100 rounded-xl focus:outline-none focus:ring-0 text-sm"
-                  autoComplete="off"
-                />
-                <button
-                  type="submit"
-                  className="btn btn-primary bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-none rounded-xl text-white text-xs font-bold px-5"
-                >
-                  Send
-                </button>
-              </form>
-            </div>
-          </div>
-        </>
       )}
 
       {/* UNMATCH CONFIRMATION MODAL */}
