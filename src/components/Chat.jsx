@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Send, Smile, Paperclip } from "lucide-react";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { BASE_URL } from "../utils/constants";
 
 const Chat = () => {
   const { toUserId } = useParams();
@@ -13,7 +15,30 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const socketRef = useRef(null);
-  console.log("🚀 ~ Chat ~ messages:", messages);
+
+  const fetchChat = async () => {
+    try {
+      const chat = await axios.get(`${BASE_URL}/chat/${toUserId}`, {
+        withCredentials: true,
+      });
+      const messages = chat.data.messages.map((message) => ({
+        ...message,
+        fromMe: message.sender._id === userId,
+        firstName: message?.sender?.firstName,
+        lastName: message?.sender?.lastName,
+        text: message?.content,
+      }));
+      console.log("🚀 ~ fetchChat ~ messages:", messages);
+      setMessages(messages);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!userId) return;
+    fetchChat();
+  }, [userId, toUserId]);
 
   useEffect(() => {
     if (!userId || !toUserId) return;
