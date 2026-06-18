@@ -23,7 +23,7 @@ const Chat = () => {
       });
       const messages = chat.data.messages.map((message) => ({
         ...message,
-        fromMe: message.sender._id === userId,
+        fromMe: message?.sender?._id === userId,
         firstName: message?.sender?.firstName,
         lastName: message?.sender?.lastName,
         text: message?.content,
